@@ -4,7 +4,9 @@ import { createServerClient } from '@/lib/supabase/server'
 import { AttendanceGrid } from '@/components/dashboard/AttendanceGrid'
 import { GroupSelector } from '@/components/dashboard/GroupSelector'
 import { TodayCheckinCard } from '@/components/dashboard/TodayCheckinCard'
-import type { Cohort, Student } from '@/types/database'
+import { MissionCard } from '@/components/mission/MissionCard'
+import { BackButton } from '@/components/ui/BackButton'
+import type { Cohort, Mission, MissionSubmission, Student } from '@/types/database'
 
 interface Props {
   params: Promise<{ group: string }>
@@ -46,6 +48,28 @@ export default async function DashboardGroupPage({ params }: Props) {
     .eq('date', today)
   const attendances = (attendancesResult.data ?? []) as { student_id: string }[]
 
+  const missionsResult = await supabase
+    .from('missions')
+    .select('*')
+    .eq('cohort_id', cohortId)
+    .or(`dashboard_group.is.null,dashboard_group.eq.${group}`)
+    .order('week', { ascending: true })
+    .order('created_at', { ascending: true })
+  const missions = (missionsResult.data ?? []) as Mission[]
+
+  const missionIds = missions.map(m => m.id)
+  const submissionsResult = missionIds.length > 0
+    ? await supabase
+        .from('mission_submissions')
+        .select('mission_id, student_id')
+        .in('mission_id', missionIds)
+    : { data: [] }
+  const submissions = (submissionsResult.data ?? []) as Pick<MissionSubmission, 'mission_id' | 'student_id'>[]
+  const submissionsByMission = submissions.reduce<Record<string, number>>((acc, s) => {
+    acc[s.mission_id] = (acc[s.mission_id] ?? 0) + 1
+    return acc
+  }, {})
+
   const groups = [...new Set(students.map(s => s.dashboard_group))].sort()
 
   if (!groups.includes(group)) {
@@ -64,6 +88,7 @@ export default async function DashboardGroupPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-neutral-50">
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+        <BackButton href="/" label="← 기수 선택으로" />
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-2xl font-bold text-neutral-900">{activeCohort.name}</h1>
@@ -85,6 +110,22 @@ export default async function DashboardGroupPage({ params }: Props) {
             group={group}
           />
         </div>
+
+        {missions.length > 0 && (
+          <div>
+            <h2 className="text-lg font-semibold mb-3">미션</h2>
+            <div className="space-y-3">
+              {missions.map(m => (
+                <MissionCard
+                  key={m.id}
+                  mission={m}
+                  submissionCount={submissionsByMission[m.id] ?? 0}
+                  totalStudents={groupStudents.length}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

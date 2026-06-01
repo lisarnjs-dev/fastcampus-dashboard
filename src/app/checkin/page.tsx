@@ -22,6 +22,10 @@ export default async function CheckinPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-50">
       <div className="w-full max-w-md px-4">
+        <div className="mb-4">
+          {/* BackButton은 client component이므로 dynamic import 없이 바로 사용 */}
+          <a href={`/dashboard/${dashboardGroup}`} className="text-sm text-neutral-500 hover:text-neutral-800">← 뒤로</a>
+        </div>
         <CheckinForm
           alreadyCheckedIn={!!existing}
           existingMessage={existing?.message}

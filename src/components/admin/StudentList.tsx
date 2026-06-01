@@ -14,6 +14,21 @@ export function StudentList({ students }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
+  function downloadCsv() {
+    const rows = [
+      ['이름', '그룹', '인증코드'],
+      ...students.map(s => [s.name, s.dashboard_group, s.auth_code]),
+    ]
+    const csv = rows.map(r => r.join(',')).join('\n')
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'students.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   async function deleteStudent(id: string, name: string) {
     if (!confirm(`"${name}" 수강생을 삭제하시겠습니까?`)) return
     setLoading(true)
@@ -41,7 +56,12 @@ export function StudentList({ students }: Props) {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-neutral-600">총 {students.length}명</p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-neutral-600">총 {students.length}명</p>
+        <Button variant="outline" size="sm" onClick={downloadCsv} data-testid="download-students-csv">
+          CSV 다운로드
+        </Button>
+      </div>
       {groups.map(group => (
         <div key={group}>
           <h3 className="font-semibold text-neutral-700 mb-2">그룹 {group} ({grouped[group].length}명)</h3>

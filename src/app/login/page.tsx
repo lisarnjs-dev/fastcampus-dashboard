@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { BackButton } from '@/components/ui/BackButton'
 
 export default function StudentLoginPage() {
   const router = useRouter()
@@ -40,6 +41,7 @@ export default function StudentLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-neutral-50">
       <Card className="w-full max-w-sm">
         <CardHeader>
+          <BackButton href="/" />
           <CardTitle className="text-xl">수강생 로그인</CardTitle>
         </CardHeader>
         <CardContent>

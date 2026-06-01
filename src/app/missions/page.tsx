@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 import { createServerClient } from '@/lib/supabase/server'
 import { MissionCard } from '@/components/mission/MissionCard'
+import { BackButton } from '@/components/ui/BackButton'
 import type { Cohort, Mission, MissionSubmission } from '@/types/database'
 
 export default async function MissionsPage() {
@@ -61,6 +62,7 @@ export default async function MissionsPage() {
   return (
     <div className="min-h-screen bg-neutral-50">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
+        <BackButton />
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">미션 목록</h1>
           <p className="text-sm text-neutral-500 mt-1">{activeCohort.name}</p>
