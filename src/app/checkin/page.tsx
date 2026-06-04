@@ -20,11 +20,15 @@ export default async function CheckinPage() {
     .maybeSingle()
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-      <div className="w-full max-w-md px-4">
-        <div className="mb-4">
-          {/* BackButton은 client component이므로 dynamic import 없이 바로 사용 */}
-          <a href={`/dashboard/${dashboardGroup}`} className="text-sm text-neutral-500 hover:text-neutral-800">← 뒤로</a>
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm">
+        <div className="mb-6">
+          <a
+            href={`/dashboard/${dashboardGroup}`}
+            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors"
+          >
+            ← 대시보드로
+          </a>
         </div>
         <CheckinForm
           alreadyCheckedIn={!!existing}

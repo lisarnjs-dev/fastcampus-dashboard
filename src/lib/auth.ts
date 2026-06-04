@@ -6,13 +6,22 @@ export async function verifyAdminCredentials(username: string, password: string)
   return bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH!)
 }
 
-export async function verifyStudentCredentials(name: string, authCode: string) {
+export async function verifyStudentCredentials(name: string, authCode: string, cohortId?: string, group?: string) {
   const supabase = createServerClient()
-  const { data } = await supabase
+  let query = supabase
     .from('students')
     .select('id, cohort_id, dashboard_group, name')
     .eq('name', name.trim())
     .eq('auth_code', authCode.trim().toUpperCase())
-    .maybeSingle()
+
+  if (cohortId) {
+    query = query.eq('cohort_id', cohortId)
+  }
+
+  if (group) {
+    query = query.eq('dashboard_group', group)
+  }
+
+  const { data } = await query.maybeSingle()
   return data
 }

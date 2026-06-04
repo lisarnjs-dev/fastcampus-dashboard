@@ -22,14 +22,18 @@ export function AttendanceGrid({ students, initialAttended, group }: Props) {
             title={s.name}
             data-testid={`attendance-cell-${s.id}`}
             className={[
-              'flex flex-col items-center justify-center rounded-lg p-2 text-xs text-center transition-colors',
+              'flex flex-col items-center justify-center rounded-lg p-2 text-center transition-all border',
               isPresent
-                ? 'bg-green-100 border border-green-300 text-green-800'
-                : 'bg-neutral-100 border border-neutral-200 text-neutral-400',
+                ? 'bg-emerald-50 border-emerald-200 shadow-sm'
+                : 'bg-gray-50 border-gray-200',
             ].join(' ')}
           >
-            <span className="text-lg">{isPresent ? '✓' : '○'}</span>
-            <span className="truncate w-full text-center">{s.name}</span>
+            <span className={`text-base mb-0.5 ${isPresent ? 'text-emerald-500' : 'text-gray-300'}`}>
+              {isPresent ? '✓' : '○'}
+            </span>
+            <span className={`truncate w-full text-center text-[10px] leading-tight ${isPresent ? 'text-emerald-700 font-medium' : 'text-gray-400'}`}>
+              {s.name}
+            </span>
           </div>
         )
       })}

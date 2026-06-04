@@ -1,7 +1,6 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Button } from './button'
 
 interface Props {
   href?: string
@@ -20,14 +19,12 @@ export function BackButton({ href, label = '← 뒤로' }: Props) {
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
+    <button
       onClick={handleClick}
-      className="text-neutral-500 hover:text-neutral-800 -ml-2"
+      className="flex items-center gap-1 text-[12px] text-black/40 hover:text-black/70 transition-colors"
       data-testid="back-button"
     >
       {label}
-    </Button>
+    </button>
   )
 }
