@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { createServerClient } from '@/lib/supabase/server'
 import { MissionManager } from '@/components/admin/MissionManager'
 import { GoogleFormsCsvImport } from '@/components/admin/GoogleFormsCsvImport'
+import { GoogleFormsWebhookSetup } from '@/components/admin/GoogleFormsWebhookSetup'
 import type { Cohort, Mission } from '@/types/database'
 
 export default async function AdminMissionsPage() {
@@ -26,11 +27,23 @@ export default async function AdminMissionsPage() {
   }
 
   return (
-    <div className="space-y-10">
-      <h1 className="text-2xl font-bold text-neutral-900">미션 관리</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold text-txt-primary">미션 관리</h1>
+        {activeCohort && (
+          <p className="text-sm text-txt-muted mt-0.5">{activeCohort.name}</p>
+        )}
+      </div>
+
       <MissionManager missions={missions} activeCohort={activeCohort} />
-      <hr className="border-neutral-200" />
-      <GoogleFormsCsvImport missions={missions} />
+
+      {activeCohort && (
+        <GoogleFormsWebhookSetup activeCohort={activeCohort} />
+      )}
+
+      {missions.length > 0 && (
+        <GoogleFormsCsvImport missions={missions} />
+      )}
     </div>
   )
 }

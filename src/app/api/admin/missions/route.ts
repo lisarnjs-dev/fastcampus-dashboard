@@ -88,6 +88,16 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(insertResult.data, { status: 201 })
 }
 
+export async function PATCH(request: NextRequest) {
+  const { id, dueAt } = await request.json() as { id: string; dueAt: string }
+  if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+
+  const supabase = createServerClient()
+  const { error } = await supabase.from('missions').update({ due_at: dueAt }).eq('id', id)
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ ok: true })
+}
+
 export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const missionId = searchParams.get('id')

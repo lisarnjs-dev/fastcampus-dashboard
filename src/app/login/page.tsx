@@ -2,11 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { BackButton } from '@/components/ui/BackButton'
 
 export default function StudentLoginPage() {
   const router = useRouter()
@@ -17,17 +12,12 @@ export default function StudentLoginPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
-
     const form = new FormData(e.currentTarget)
     const res = await fetch('/api/auth/student', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: form.get('name'),
-        authCode: form.get('authCode'),
-      }),
+      body: JSON.stringify({ name: form.get('name'), authCode: form.get('authCode') }),
     })
-
     setLoading(false)
     if (res.ok) {
       const { group } = await res.json()
@@ -38,46 +28,64 @@ export default function StudentLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <BackButton href="/" />
-          <CardTitle className="text-xl">수강생 로그인</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4" data-testid="student-login-form">
-            <div className="space-y-1">
-              <Label htmlFor="name">이름</Label>
-              <Input
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 py-12">
+      <div className="mb-8 text-center">
+        <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-violet-600 mb-3">
+          <span className="text-white font-bold text-lg">V</span>
+        </div>
+        <h1 className="text-lg font-semibold text-gray-900">Vibe Class</h1>
+      </div>
+
+      <div className="w-full max-w-sm bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="px-6 pt-6 pb-4 border-b border-gray-100">
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors mb-3"
+          >
+            ← 뒤로
+          </button>
+          <h2 className="text-base font-semibold text-gray-900">로그인</h2>
+        </div>
+        <div className="p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4" data-testid="student-login-form">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="name" className="text-sm font-medium text-gray-700">이름</label>
+              <input
                 id="name"
                 name="name"
                 type="text"
                 placeholder="홍길동"
                 required
                 data-testid="student-name"
+                className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 transition-all"
               />
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="authCode">인증코드</Label>
-              <Input
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="authCode" className="text-sm font-medium text-gray-700">인증코드</label>
+              <input
                 id="authCode"
                 name="authCode"
                 type="text"
-                placeholder="예: AB3X7K9M"
+                placeholder="AB3X7K9M"
                 required
-                className="font-mono uppercase"
                 data-testid="student-auth-code"
+                className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 font-mono tracking-widest bg-white focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 transition-all"
               />
             </div>
             {error && (
-              <p className="text-sm text-red-600" data-testid="student-login-error">{error}</p>
+              <p className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2" data-testid="student-login-error">{error}</p>
             )}
-            <Button type="submit" className="w-full" disabled={loading} data-testid="student-login-submit">
+            <button
+              type="submit"
+              disabled={loading}
+              data-testid="student-login-submit"
+              className="w-full py-3 bg-violet-600 text-white text-sm font-medium rounded-xl hover:bg-violet-700 transition-colors disabled:opacity-50 mt-1"
+            >
               {loading ? '로그인 중...' : '로그인'}
-            </Button>
+            </button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

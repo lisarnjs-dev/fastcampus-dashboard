@@ -4,7 +4,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   DESIGN TOKEN SYSTEM — Vibe Class Dashboard
+   ============================================================
+   3단계 계층 구조:
+     Tier 1 (Primitive)  → 원시값. 코드에서 직접 사용 금지.
+     Tier 2 (Semantic)   → 의미 이름. 항상 이것만 사용.
+     Tier 3 (Component)  → 컴포넌트 전용 토큰 (필요 시 추가).
+
+   규칙: violet-600, gray-500 같은 원시값을 직접 쓰지 말 것.
+         아래에 정의된 Semantic 토큰만 사용할 것.
+   ============================================================ */
+
 @theme inline {
+  /* shadcn 기본 토큰 매핑 (유지) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -46,75 +59,166 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* ── Semantic 색상 토큰 → Tailwind 유틸리티 생성 ── */
+  /* 사용법: bg-brand / text-brand / border-brand */
+
+  /* Brand (Primary) */
+  --color-brand:          var(--t-brand);
+  --color-brand-hover:    var(--t-brand-hover);
+  --color-brand-subtle:   var(--t-brand-subtle);
+  --color-brand-muted:    var(--t-brand-muted);
+  --color-brand-fg:       var(--t-brand-fg);
+
+  /* Page & Surface */
+  --color-page:           var(--t-page);
+  --color-surface:        var(--t-surface);
+
+  /* Text */
+  --color-txt-primary:    var(--t-txt-primary);
+  --color-txt-secondary:  var(--t-txt-secondary);
+  --color-txt-muted:      var(--t-txt-muted);
+  --color-txt-placeholder:var(--t-txt-placeholder);
+
+  /* Border */
+  --color-bdr:            var(--t-border);
+  --color-bdr-focus:      var(--t-border-focus);
+
+  /* Success */
+  --color-success:        var(--t-success);
+  --color-success-subtle: var(--t-success-subtle);
+  --color-success-border: var(--t-success-border);
+  --color-success-fg:     var(--t-success-fg);
+
+  /* Error */
+  --color-error:          var(--t-error);
+  --color-error-subtle:   var(--t-error-subtle);
+  --color-error-border:   var(--t-error-border);
+
+  /* Warning */
+  --color-warning:        var(--t-warning);
+  --color-warning-subtle: var(--t-warning-subtle);
+  --color-warning-fg:     var(--t-warning-fg);
+
+  /* Font Families */
+  --font-display: var(--font-shadows-into-light), cursive;
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  /* ────────────────────────────────────────────────
+     Tier 1: Primitive Tokens (원시값 — 직접 사용 금지)
+     ──────────────────────────────────────────────── */
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* Violet (Brand) */
+  --p-violet-50:  #F5F3FF;
+  --p-violet-100: #EDE9FE;
+  --p-violet-500: #8B5CF6;
+  --p-violet-600: #7C3AED;
+  --p-violet-700: #6D28D9;
+
+  /* Slate (Neutral) */
+  --p-slate-50:  #F8FAFC;
+  --p-slate-100: #F1F5F9;
+  --p-slate-200: #E2E8F0;
+  --p-slate-300: #CBD5E1;
+  --p-slate-400: #94A3B8;
+  --p-slate-500: #64748B;
+  --p-slate-700: #334155;
+  --p-slate-900: #0F172A;
+
+  /* Emerald (Success) */
+  --p-emerald-50:  #ECFDF5;
+  --p-emerald-200: #A7F3D0;
+  --p-emerald-500: #10B981;
+  --p-emerald-700: #047857;
+
+  /* Red (Error) */
+  --p-red-50:  #FEF2F2;
+  --p-red-100: #FEE2E2;
+  --p-red-400: #F87171;
+  --p-red-500: #EF4444;
+
+  /* Amber (Warning) */
+  --p-amber-50:  #FFFBEB;
+  --p-amber-500: #F59E0B;
+  --p-amber-700: #B45309;
+
+  /* ────────────────────────────────────────────────
+     Tier 2: Semantic Tokens (의미값 — 항상 이것만 사용)
+     ──────────────────────────────────────────────── */
+
+  /* Brand */
+  --t-brand:        var(--p-violet-600);
+  --t-brand-hover:  var(--p-violet-700);
+  --t-brand-subtle: var(--p-violet-50);
+  --t-brand-muted:  var(--p-violet-100);
+  --t-brand-fg:     #FFFFFF;
+
+  /* Page & Surface */
+  --t-page:    var(--p-slate-50);   /* 전체 페이지 배경 */
+  --t-surface: #FFFFFF;             /* 카드/모달 배경 */
+
+  /* Text */
+  --t-txt-primary:     var(--p-slate-900);
+  --t-txt-secondary:   var(--p-slate-700);
+  --t-txt-muted:       var(--p-slate-500);
+  --t-txt-placeholder: var(--p-slate-400);
+
+  /* Border */
+  --t-border:       var(--p-slate-200);
+  --t-border-focus: var(--p-violet-600);
+
+  /* Success */
+  --t-success:        var(--p-emerald-500);
+  --t-success-subtle: var(--p-emerald-50);
+  --t-success-border: var(--p-emerald-200);
+  --t-success-fg:     var(--p-emerald-700);
+
+  /* Error */
+  --t-error:        var(--p-red-500);
+  --t-error-subtle: var(--p-red-50);
+  --t-error-border: var(--p-red-100);
+
+  /* Warning */
+  --t-warning:        var(--p-amber-500);
+  --t-warning-subtle: var(--p-amber-50);
+  --t-warning-fg:     var(--p-amber-700);
+
+  /* ────────────────────────────────────────────────
+     shadcn 기본값 → 우리 브랜드로 Override
+     ──────────────────────────────────────────────── */
+  --background: var(--p-slate-50);         /* bg-background = 페이지 배경 */
+  --foreground: var(--p-slate-900);
+  --card: #FFFFFF;
+  --card-foreground: var(--p-slate-900);
+  --popover: #FFFFFF;
+  --popover-foreground: var(--p-slate-900);
+  --primary: var(--p-violet-600);          /* bg-primary = 브랜드 컬러 */
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--p-slate-100);
+  --secondary-foreground: var(--p-slate-700);
+  --muted: var(--p-slate-100);
+  --muted-foreground: var(--p-slate-500);
+  --accent: var(--p-violet-50);
+  --accent-foreground: var(--p-violet-700);
+  --destructive: var(--p-red-500);
+  --border: var(--p-slate-200);
+  --input: var(--p-slate-200);
+  --ring: var(--p-violet-600);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --radius: 0.5rem;                        /* base radius = 8px */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: var(--p-slate-900);
+  --sidebar-primary: var(--p-violet-600);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: var(--p-violet-50);
+  --sidebar-accent-foreground: var(--p-violet-700);
+  --sidebar-border: var(--p-slate-200);
+  --sidebar-ring: var(--p-violet-600);
 }
 
 @layer base {
@@ -123,8 +227,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "ss01" 1, "cv01" 1;
   }
   html {
-    @apply font-sans;
+    font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
