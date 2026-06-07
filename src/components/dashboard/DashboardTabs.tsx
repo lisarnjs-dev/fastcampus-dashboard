@@ -4,9 +4,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { AttendanceGrid } from './AttendanceGrid'
 import { MissionSubmissionGrid } from './MissionSubmissionGrid'
+import { MyAttendanceHistory } from './MyAttendanceHistory'
 import type { Mission, Student } from '@/types/database'
 
-type Tab = 'attendance' | 'mission'
+type Tab = 'attendance' | 'mission' | 'my-history'
 
 interface Props {
   students: Student[]
@@ -14,9 +15,10 @@ interface Props {
   submissions: { mission_id: string; student_id: string }[]
   attendedIds: string[]
   group: string
+  isStudentLoggedIn: boolean
 }
 
-export function DashboardTabs({ students, missions, submissions, attendedIds, group }: Props) {
+export function DashboardTabs({ students, missions, submissions, attendedIds, group, isStudentLoggedIn }: Props) {
   const [tab, setTab] = useState<Tab>('attendance')
 
   return (
@@ -33,7 +35,7 @@ export function DashboardTabs({ students, missions, submissions, attendedIds, gr
               : 'text-gray-500 hover:text-gray-700',
           ].join(' ')}
         >
-          출석 인증 현황
+          출석 현황
         </button>
         <button
           onClick={() => setTab('mission')}
@@ -47,6 +49,20 @@ export function DashboardTabs({ students, missions, submissions, attendedIds, gr
         >
           미션 제출 현황
         </button>
+        {isStudentLoggedIn && (
+          <button
+            onClick={() => setTab('my-history')}
+            data-testid="tab-my-history"
+            className={[
+              'flex-1 py-2 text-sm font-medium rounded-lg transition-all',
+              tab === 'my-history'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700',
+            ].join(' ')}
+          >
+            내 출석 기록
+          </button>
+        )}
       </div>
 
       {/* Tab content */}
@@ -113,6 +129,13 @@ export function DashboardTabs({ students, missions, submissions, attendedIds, gr
               submissions={submissions}
             />
           </div>
+        </div>
+      )}
+
+      {tab === 'my-history' && isStudentLoggedIn && (
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <h2 className="text-sm font-medium text-gray-700 mb-4">내 누적 출석 기록</h2>
+          <MyAttendanceHistory />
         </div>
       )}
     </div>

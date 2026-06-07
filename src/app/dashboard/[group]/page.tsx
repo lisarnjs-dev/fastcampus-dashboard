@@ -4,6 +4,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import { DashboardTabs } from '@/components/dashboard/DashboardTabs'
 import { GroupSelector } from '@/components/dashboard/GroupSelector'
 import { TodayCheckinCard } from '@/components/dashboard/TodayCheckinCard'
+import { getSession } from '@/lib/session'
 import type { Cohort, Mission, MissionSubmission, Student } from '@/types/database'
 
 interface Props {
@@ -51,6 +52,9 @@ export default async function DashboardGroupPage({ params }: Props) {
     ? await supabase.from('mission_submissions').select('mission_id, student_id').in('mission_id', missionIds)
     : { data: [] }
   const submissions = (submissionsResult.data ?? []) as Pick<MissionSubmission, 'mission_id' | 'student_id'>[]
+
+  const session = await getSession()
+  const isStudentLoggedIn = !!session.student
 
   const groups = [...new Set(students.map(s => s.dashboard_group))].sort()
 
@@ -126,6 +130,7 @@ export default async function DashboardGroupPage({ params }: Props) {
           submissions={submissions}
           attendedIds={attendedIds}
           group={group}
+          isStudentLoggedIn={isStudentLoggedIn}
         />
       </div>
     </div>
