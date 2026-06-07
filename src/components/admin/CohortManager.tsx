@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Cohort } from '@/types/database'
+import { addWeeks } from '@/lib/date'
 
 interface Props {
   cohorts: Cohort[]
@@ -85,14 +86,25 @@ export function CohortManager({ cohorts }: Props) {
             </div>
             <div>
               <label className="block text-xs text-txt-muted mb-1">종료일</label>
-              <Input
-                type="date"
-                value={endDate}
-                min={startDate}
-                onChange={e => setEndDate(e.target.value)}
-                className="w-40"
-                data-testid="cohort-end-date-input"
-              />
+              <div className="flex gap-1.5 items-center">
+                <Input
+                  type="date"
+                  value={endDate}
+                  min={startDate}
+                  onChange={e => setEndDate(e.target.value)}
+                  className="w-40"
+                  data-testid="cohort-end-date-input"
+                />
+                <button
+                  type="button"
+                  onClick={() => setEndDate(addWeeks(startDate, 3))}
+                  disabled={!startDate}
+                  data-testid="cohort-3week-preset"
+                  className="shrink-0 text-xs px-2 py-1.5 rounded-lg border border-bdr text-txt-secondary hover:border-brand hover:text-brand transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                  3주 자동설정
+                </button>
+              </div>
             </div>
             <Button type="submit" disabled={loading || !newName.trim() || !startDate || !endDate} data-testid="create-cohort-submit">
               {loading ? '생성 중...' : '생성'}
