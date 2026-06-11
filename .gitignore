@@ -12,6 +12,13 @@
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
+test-upload-*.csv
+
+# local tool artifacts
+/.harness/
+/.lazyweb/
 
 # next.js
 /.next/
