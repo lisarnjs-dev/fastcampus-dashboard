@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase/server'
 import { MissionDetailModal } from '@/components/dashboard/MissionDetailModal'
 import { MissionDetailContent } from '@/components/dashboard/MissionDetailContent'
-import type { Mission, MissionSubmission, Student } from '@/types/database'
+import { hasCohortStarted } from '@/lib/date'
+import type { Cohort, Mission, MissionSubmission, Student } from '@/types/database'
 
 interface Props {
   params: Promise<{ group: string; missionId: string }>
@@ -21,6 +22,10 @@ export default async function MissionModalPage({ params }: Props) {
   const mission = missionResult.data as Mission | null
   if (!mission) notFound()
 
+  const cohortResult = await supabase
+    .from('cohorts').select('started_at').eq('id', mission.cohort_id).maybeSingle()
+  const cohort = cohortResult.data as Pick<Cohort, 'started_at'> | null
+
   const studentsResult = await supabase
     .from('students')
     .select('id, name')
@@ -37,7 +42,13 @@ export default async function MissionModalPage({ params }: Props) {
 
   return (
     <MissionDetailModal>
-      <MissionDetailContent mission={mission} group={group} students={studentsWithStatus} />
+      <MissionDetailContent
+        mission={mission}
+        group={group}
+        students={studentsWithStatus}
+        cohortStarted={hasCohortStarted(cohort?.started_at ?? null)}
+        cohortStartedAt={cohort?.started_at ?? null}
+      />
     </MissionDetailModal>
   )
 }

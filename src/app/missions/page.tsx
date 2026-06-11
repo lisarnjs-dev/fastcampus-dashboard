@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 import { createServerClient } from '@/lib/supabase/server'
 import { MissionCard } from '@/components/mission/MissionCard'
+import { hasCohortStarted } from '@/lib/date'
 import type { Cohort, Mission, MissionSubmission } from '@/types/database'
 
 export default async function MissionsPage() {
@@ -85,6 +86,8 @@ export default async function MissionsPage() {
                   mission={m}
                   submissionCount={submissionsByMission[m.id] ?? 0}
                   totalStudents={studentCount}
+                  cohortStarted={hasCohortStarted(activeCohort.started_at)}
+                  cohortStartedAt={activeCohort.started_at}
                 />
               ))}
             </div>

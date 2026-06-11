@@ -1,4 +1,5 @@
 import type { Mission } from '@/types/database'
+import { CohortStartGate } from '@/components/ui/CohortStartGate'
 
 interface StudentStatus {
   id: string
@@ -10,9 +11,11 @@ interface Props {
   mission: Mission
   group: string
   students: StudentStatus[]
+  cohortStarted: boolean
+  cohortStartedAt: string | null
 }
 
-export function MissionDetailContent({ mission, group, students }: Props) {
+export function MissionDetailContent({ mission, group, students, cohortStarted, cohortStartedAt }: Props) {
   const isPast = mission.due_at ? new Date(mission.due_at) < new Date() : false
   const submitted = students.filter(s => s.submitted)
   const notSubmitted = students.filter(s => !s.submitted)
@@ -51,15 +54,16 @@ export function MissionDetailContent({ mission, group, students }: Props) {
 
       {/* Submit button */}
       {mission.google_form_url && (
-        <a
+        <CohortStartGate
+          started={cohortStarted}
+          startedAt={cohortStartedAt}
           href={mission.google_form_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-testid="mission-submit-link"
+          external
+          dataTestId="mission-submit-link"
           className="flex items-center justify-center w-full py-3 bg-brand text-brand-fg text-sm font-semibold rounded-xl hover:bg-brand-hover transition-colors mb-6"
         >
           미션 제출하기
-        </a>
+        </CohortStartGate>
       )}
 
       {/* Submission stats */}

@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase/server'
 import { DashboardTabs } from '@/components/dashboard/DashboardTabs'
@@ -79,13 +80,13 @@ export default async function DashboardGroupPage({ params }: Props) {
         <div className="max-w-4xl mx-auto px-5 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <a
+              <Link
                 href="/"
                 data-testid="back-button"
                 className="text-gray-400 hover:text-gray-700 transition-colors text-sm"
               >
                 ←
-              </a>
+              </Link>
               <div>
                 <h1 className="font-semibold text-gray-900">{activeCohort.name}</h1>
                 <p className="text-xs text-gray-400">{today}</p>
@@ -121,7 +122,7 @@ export default async function DashboardGroupPage({ params }: Props) {
         </div>
 
         {/* Checkin card */}
-        <TodayCheckinCard />
+        <TodayCheckinCard cohort={activeCohort} />
 
         {/* Attendance / Mission tabs */}
         <DashboardTabs

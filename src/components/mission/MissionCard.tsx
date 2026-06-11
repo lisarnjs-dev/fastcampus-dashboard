@@ -1,12 +1,15 @@
 import { Mission } from '@/types/database'
+import { CohortStartGate } from '@/components/ui/CohortStartGate'
 
 interface Props {
   mission: Mission
   submissionCount: number
   totalStudents: number
+  cohortStarted: boolean
+  cohortStartedAt: string | null
 }
 
-export function MissionCard({ mission, submissionCount, totalStudents }: Props) {
+export function MissionCard({ mission, submissionCount, totalStudents, cohortStarted, cohortStartedAt }: Props) {
   const pct = totalStudents > 0 ? Math.round((submissionCount / totalStudents) * 100) : 0
   const isPast = mission.due_at ? new Date(mission.due_at) < new Date() : false
 
@@ -38,14 +41,16 @@ export function MissionCard({ mission, submissionCount, totalStudents }: Props) 
           )}
         </div>
         {mission.google_form_url && (
-          <a
+          <CohortStartGate
+            started={cohortStarted}
+            startedAt={cohortStartedAt}
             href={mission.google_form_url}
-            target="_blank"
-            rel="noopener noreferrer"
+            external
+            dataTestId={`mission-submit-${mission.id}`}
             className="shrink-0 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-xl hover:bg-violet-700 transition-colors"
           >
             제출하기
-          </a>
+          </CohortStartGate>
         )}
       </div>
 
