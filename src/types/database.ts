@@ -10,6 +10,7 @@ export interface Database {
           status: 'active' | 'archived'
           started_at: string
           ended_at: string | null
+          planned_end_at: string | null
           created_at: string
         }
         Insert: {
@@ -18,6 +19,7 @@ export interface Database {
           status?: 'active' | 'archived'
           started_at?: string
           ended_at?: string | null
+          planned_end_at?: string | null
           created_at?: string
         }
         Update: {
@@ -26,6 +28,7 @@ export interface Database {
           status?: string
           started_at?: string
           ended_at?: string | null
+          planned_end_at?: string | null
           created_at?: string
         }
         Relationships: []

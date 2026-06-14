@@ -17,13 +17,13 @@ export function GroupSelector({ groups }: Props) {
         <Link
           key={g}
           href={`/dashboard/${g}`}
-          className={[
-            'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
-            currentGroup === g
-              ? 'bg-neutral-900 text-white'
-              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200',
-          ].join(' ')}
           data-testid={`group-tab-${g}`}
+          className={[
+            'px-4 py-2 rounded-xl text-sm font-medium transition-all border',
+            currentGroup === g
+              ? 'bg-violet-600 text-white border-violet-600 shadow-sm'
+              : 'bg-white text-gray-600 border-gray-200 hover:border-violet-300 hover:text-violet-600',
+          ].join(' ')}
         >
           그룹 {g}
         </Link>

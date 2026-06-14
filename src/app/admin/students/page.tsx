@@ -32,7 +32,7 @@ export default async function StudentsPage() {
       <section>
         <h2 className="text-lg font-semibold mb-4">CSV 업로드</h2>
         <div className="bg-white border border-neutral-200 rounded-lg p-4 max-w-lg">
-          <StudentCsvUpload activeCohort={activeCohort} />
+          <StudentCsvUpload cohorts={cohorts} />
         </div>
       </section>
 

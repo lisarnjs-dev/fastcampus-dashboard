@@ -14,7 +14,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const { name, action, cohortId } = await request.json()
+  const { name, action, cohortId, started_at, planned_end_at } = await request.json()
   const supabase = createServerClient()
 
   if (action === 'end') {
@@ -30,6 +30,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: '기수명을 입력하세요' }, { status: 400 })
   }
 
+  const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+
+  if (!started_at || !DATE_RE.test(started_at)) {
+    return NextResponse.json({ error: '시작일을 올바르게 입력하세요 (YYYY-MM-DD)' }, { status: 400 })
+  }
+
+  if (!planned_end_at || !DATE_RE.test(planned_end_at)) {
+    return NextResponse.json({ error: '종료일을 올바르게 입력하세요 (YYYY-MM-DD)' }, { status: 400 })
+  }
+
+  if (planned_end_at <= started_at) {
+    return NextResponse.json({ error: '종료일은 시작일 이후여야 합니다' }, { status: 400 })
+  }
+
   const existingResult = await supabase
     .from('cohorts')
     .select('id')
@@ -43,7 +57,12 @@ export async function POST(request: NextRequest) {
 
   const insertResult = await supabase
     .from('cohorts')
-    .insert({ name: name.trim(), status: 'active' })
+    .insert({
+      name: name.trim(),
+      status: 'active',
+      started_at: new Date(started_at).toISOString(),
+      planned_end_at,
+    })
     .select()
     .single()
 

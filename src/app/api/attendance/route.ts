@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/session'
+import { hasCohortStarted } from '@/lib/date'
 
 export async function POST(request: NextRequest) {
   const session = await getSession()
@@ -17,6 +18,13 @@ export async function POST(request: NextRequest) {
   const today = new Date().toLocaleDateString('sv-SE')
 
   const supabase = createServerClient()
+
+  const { data: cohort } = await supabase
+    .from('cohorts').select('started_at').eq('id', cohortId).maybeSingle()
+  if (cohort && !hasCohortStarted(cohort.started_at)) {
+    return NextResponse.json({ error: '아직 기수가 시작되지 않았습니다' }, { status: 403 })
+  }
+
   const { error } = await supabase.from('attendances').insert({
     student_id: studentId,
     cohort_id: cohortId,

@@ -35,20 +35,20 @@ export async function POST(request: NextRequest) {
     studentMap.set(normalizeName(s.name), s.id)
   }
 
-  const matched: string[] = []
+  const matchedSet = new Set<string>()
   const unmatched: string[] = []
 
   for (const name of names) {
     const studentId = studentMap.get(normalizeName(name))
     if (studentId) {
-      matched.push(studentId)
+      matchedSet.add(studentId)
     } else {
       unmatched.push(name)
     }
   }
 
-  if (matched.length > 0) {
-    const submissions = matched.map(studentId => ({
+  if (matchedSet.size > 0) {
+    const submissions = Array.from(matchedSet).map(studentId => ({
       mission_id: missionId,
       student_id: studentId,
       submitted_at: new Date().toISOString(),
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({
-    matched: matched.length,
+    matched: matchedSet.size,
     unmatched,
   })
 }

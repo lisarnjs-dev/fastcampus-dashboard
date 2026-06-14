@@ -6,18 +6,24 @@ import Papa from 'papaparse'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Cohort } from '@/types/database'
 
 interface Props {
-  activeCohort: Cohort | null
+  cohorts: Cohort[]
 }
 
-export function StudentCsvUpload({ activeCohort }: Props) {
+export function StudentCsvUpload({ cohorts }: Props) {
   const router = useRouter()
+  const [selectedCohortId, setSelectedCohortId] = useState<string>(
+    cohorts.find(c => c.status === 'active')?.id ?? cohorts[0]?.id ?? ''
+  )
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [preview, setPreview] = useState<string[]>([])
+
+  const selectedCohort = cohorts.find(c => c.id === selectedCohortId) ?? null
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
@@ -38,7 +44,7 @@ export function StudentCsvUpload({ activeCohort }: Props) {
   }
 
   async function handleUpload() {
-    if (!file || !activeCohort) return
+    if (!file || !selectedCohort) return
     setLoading(true)
     setError('')
 
@@ -65,7 +71,7 @@ export function StudentCsvUpload({ activeCohort }: Props) {
     const res = await fetch('/api/admin/students', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cohortId: activeCohort.id, names: parsed }),
+      body: JSON.stringify({ cohortId: selectedCohort.id, names: parsed }),
     })
 
     setLoading(false)
@@ -80,7 +86,7 @@ export function StudentCsvUpload({ activeCohort }: Props) {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `students_${activeCohort.name}.csv`
+    a.download = `students_${selectedCohort.name}.csv`
     a.click()
     URL.revokeObjectURL(url)
 
@@ -89,18 +95,33 @@ export function StudentCsvUpload({ activeCohort }: Props) {
     router.refresh()
   }
 
-  if (!activeCohort) {
+  if (cohorts.length === 0) {
     return (
       <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
-        활성 기수가 없습니다. 먼저 기수를 생성하세요.
+        기수가 없습니다. 먼저 기수를 생성하세요.
       </p>
     )
   }
 
   return (
     <div className="space-y-4">
-      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-        현재 활성 기수: <strong>{activeCohort.name}</strong>에 수강생을 추가합니다.
+      <div className="space-y-2">
+        <Label htmlFor="cohort-select">업로드할 기수 선택</Label>
+        <Select value={selectedCohortId} onValueChange={(v) => setSelectedCohortId(v ?? '')}>
+          <SelectTrigger id="cohort-select" data-testid="cohort-select">
+            <SelectValue placeholder="기수를 선택하세요" />
+          </SelectTrigger>
+          <SelectContent>
+            {cohorts.map(cohort => (
+              <SelectItem key={cohort.id} value={cohort.id}>
+                {cohort.name}
+                {cohort.status === 'active' && (
+                  <span className="ml-2 text-xs text-green-600">(활성)</span>
+                )}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">
@@ -127,7 +148,7 @@ export function StudentCsvUpload({ activeCohort }: Props) {
 
       <Button
         onClick={handleUpload}
-        disabled={!file || loading}
+        disabled={!file || !selectedCohortId || loading}
         data-testid="student-csv-submit"
       >
         {loading ? '업로드 중...' : '업로드 및 인증코드 CSV 다운로드'}

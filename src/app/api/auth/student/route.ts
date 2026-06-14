@@ -3,13 +3,13 @@ import { getSession } from '@/lib/session'
 import { verifyStudentCredentials } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
-  const { name, authCode } = await request.json()
+  const { name, authCode, cohortId, group } = await request.json()
 
   if (!name || !authCode) {
     return NextResponse.json({ error: '이름과 인증코드를 입력해주세요' }, { status: 400 })
   }
 
-  const student = await verifyStudentCredentials(name, authCode)
+  const student = await verifyStudentCredentials(name, authCode, cohortId, group)
   if (!student) {
     return NextResponse.json({ error: '이름 또는 인증코드가 올바르지 않습니다' }, { status: 401 })
   }
