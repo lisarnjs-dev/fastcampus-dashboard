@@ -9,7 +9,14 @@
 
 ## 2026-06-17
 
+### 개선
+- **Google Forms 웹훅 localhost 경고 배너 추가** (`GoogleFormsWebhookSetup.tsx`): `NEXT_PUBLIC_SITE_URL`이 비어 있거나 `localhost`/`127.0.0.1`을 포함할 때 Apps Script 코드 박스 위에 빨간 경고 배너 표시
+  - 근본 원인: 로컬 개발 환경에서 코드를 복사하면 `localhost` URL이 Apps Script에 삽입되어 Google 서버에서 DNS 에러 발생 → 미션 제출이 대시보드에 자동 반영되지 않는 문제
+  - 해결: 경고 배너에서 Vercel 배포 후 `NEXT_PUBLIC_SITE_URL` 설정 및 코드 재복사를 안내
+
 ### 기능 추가
+- **마감된 미션 제출 버튼 비활성화**: `isPast` 조건으로 마감 미션에 disabled 버튼(마감됨 / 미션 제출하기 (마감)) 표시
+  - 적용 위치: 미션 카드 (`MissionCard`), 미션 상세 (`MissionDetailContent`)
 - **비로그인 접근 차단 모달 (`LoginRequiredGate`)**: 세션 쿠키 없이 `/dashboard/[group]`에 접근하면 즉시 로그인 안내 모달 표시
   - 모달은 닫기 불가 (배경 클릭·ESC 무효) — 반드시 로그인 버튼을 통해 `/login`으로 이동
   - 서버 컴포넌트에서 `getSession()`으로 판별 후 클라이언트 오버레이 컴포넌트에 전달

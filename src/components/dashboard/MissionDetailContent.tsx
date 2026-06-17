@@ -54,16 +54,26 @@ export function MissionDetailContent({ mission, group, students, cohortStarted, 
 
       {/* Submit button */}
       {mission.google_form_url && (
-        <CohortStartGate
-          started={cohortStarted}
-          startedAt={cohortStartedAt}
-          href={mission.google_form_url}
-          external
-          dataTestId="mission-submit-link"
-          className="flex items-center justify-center w-full py-3 bg-brand text-brand-fg text-sm font-semibold rounded-xl hover:bg-brand-hover transition-colors mb-6"
-        >
-          미션 제출하기
-        </CohortStartGate>
+        isPast ? (
+          <button
+            disabled
+            data-testid="mission-submit-link"
+            className="flex items-center justify-center w-full py-3 bg-brand text-brand-fg text-sm font-semibold rounded-xl opacity-40 cursor-not-allowed mb-6"
+          >
+            미션 제출하기 (마감)
+          </button>
+        ) : (
+          <CohortStartGate
+            started={cohortStarted}
+            startedAt={cohortStartedAt}
+            href={mission.google_form_url}
+            external
+            dataTestId="mission-submit-link"
+            className="flex items-center justify-center w-full py-3 bg-brand text-brand-fg text-sm font-semibold rounded-xl hover:bg-brand-hover transition-colors mb-6"
+          >
+            미션 제출하기
+          </CohortStartGate>
+        )
       )}
 
       {/* Submission stats */}

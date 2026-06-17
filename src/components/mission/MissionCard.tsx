@@ -41,16 +41,26 @@ export function MissionCard({ mission, submissionCount, totalStudents, cohortSta
           )}
         </div>
         {mission.google_form_url && (
-          <CohortStartGate
-            started={cohortStarted}
-            startedAt={cohortStartedAt}
-            href={mission.google_form_url}
-            external
-            dataTestId={`mission-submit-${mission.id}`}
-            className="shrink-0 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-xl hover:bg-violet-700 transition-colors"
-          >
-            제출하기
-          </CohortStartGate>
+          isPast ? (
+            <button
+              disabled
+              data-testid={`mission-submit-${mission.id}`}
+              className="shrink-0 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-xl opacity-40 cursor-not-allowed"
+            >
+              마감됨
+            </button>
+          ) : (
+            <CohortStartGate
+              started={cohortStarted}
+              startedAt={cohortStartedAt}
+              href={mission.google_form_url}
+              external
+              dataTestId={`mission-submit-${mission.id}`}
+              className="shrink-0 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-xl hover:bg-violet-700 transition-colors"
+            >
+              제출하기
+            </CohortStartGate>
+          )
         )}
       </div>
 
