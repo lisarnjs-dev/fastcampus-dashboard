@@ -7,6 +7,20 @@
 
 ---
 
+## 2026-06-17
+
+### 기능 추가
+- **비로그인 접근 차단 모달 (`LoginRequiredGate`)**: 세션 쿠키 없이 `/dashboard/[group]`에 접근하면 즉시 로그인 안내 모달 표시
+  - 모달은 닫기 불가 (배경 클릭·ESC 무효) — 반드시 로그인 버튼을 통해 `/login`으로 이동
+  - 서버 컴포넌트에서 `getSession()`으로 판별 후 클라이언트 오버레이 컴포넌트에 전달
+  - `data-testid="login-required-modal"`, `data-testid="login-required-cta"` 추가
+
+### 테스트
+- 비로그인 게이트 E2E 테스트 추가 (`e2e/login-required-gate.spec.ts`)
+  - 비로그인 접근 시 모달 표시, 배경 클릭 무효, 로그인 버튼 이동, 로그인 후 모달 미표시 시나리오 포함
+
+---
+
 ## 2026-06-11
 
 ### 기능 추가

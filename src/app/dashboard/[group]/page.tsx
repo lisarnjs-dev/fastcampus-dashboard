@@ -6,6 +6,7 @@ import { DashboardTabs } from '@/components/dashboard/DashboardTabs'
 import { GroupSelector } from '@/components/dashboard/GroupSelector'
 import { TodayCheckinCard } from '@/components/dashboard/TodayCheckinCard'
 import { getSession } from '@/lib/session'
+import { LoginRequiredGate } from '@/components/ui/LoginRequiredGate'
 import type { Cohort, Mission, MissionSubmission, Student } from '@/types/database'
 
 interface Props {
@@ -134,6 +135,7 @@ export default async function DashboardGroupPage({ params }: Props) {
           isStudentLoggedIn={isStudentLoggedIn}
         />
       </div>
+      <LoginRequiredGate isLoggedIn={isStudentLoggedIn} />
     </div>
   )
 }
