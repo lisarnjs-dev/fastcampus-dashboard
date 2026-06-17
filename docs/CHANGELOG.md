@@ -13,6 +13,8 @@
 - **Google Forms 웹훅 localhost 경고 배너 추가** (`GoogleFormsWebhookSetup.tsx`): `NEXT_PUBLIC_SITE_URL`이 비어 있거나 `localhost`/`127.0.0.1`을 포함할 때 Apps Script 코드 박스 위에 빨간 경고 배너 표시
   - 근본 원인: 로컬 개발 환경에서 코드를 복사하면 `localhost` URL이 Apps Script에 삽입되어 Google 서버에서 DNS 에러 발생 → 미션 제출이 대시보드에 자동 반영되지 않는 문제
   - 해결: 경고 배너에서 Vercel 배포 후 `NEXT_PUBLIC_SITE_URL` 설정 및 코드 재복사를 안내
+  - 코드 리뷰 반영: `siteUrl`에 `.trim()` 추가(공백 포함 값 우회 방지), 경고 배너에 `role="alert"` 추가(접근성)
+- **Apps Script 코드 섹션 토글 형태로 변경** (`GoogleFormsWebhookSetup.tsx`): 기본 접힘 상태로 표시, "펼치기/접기" 버튼으로 코드 표시 전환 — 어드민 페이지 가독성 개선
 
 ### 기능 추가
 - **마감된 미션 제출 버튼 비활성화**: `isPast` 조건으로 마감 미션에 disabled 버튼(마감됨 / 미션 제출하기 (마감)) 표시

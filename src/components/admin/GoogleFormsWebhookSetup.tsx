@@ -10,8 +10,10 @@ interface Props {
 export function GoogleFormsWebhookSetup({ activeCohort }: Props) {
   const [secret, setSecret] = useState('')
   const [copied, setCopied] = useState(false)
+  const [showCode, setShowCode] = useState(false)
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? '').trim()
+  const isLocalhost = !siteUrl || siteUrl.includes('localhost') || siteUrl.includes('127.0.0.1')
   const webhookUrl = `${siteUrl}/api/webhook/google-forms?cohort_id=${activeCohort.id}`
 
   const appsScript = `// ───────────────────────────────────────────
@@ -230,21 +232,46 @@ function toIso_(value) {
         />
       </div>
 
-      {/* 코드 박스 */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-txt-secondary">Apps Script 코드</label>
-          <button
-            onClick={handleCopy}
-            data-testid="copy-script-btn"
-            className="text-xs px-3 py-1.5 rounded-lg border border-bdr hover:border-brand hover:text-brand transition-all text-txt-muted"
-          >
-            {copied ? '✓ 복사됨' : '복사'}
-          </button>
+      {/* localhost 경고 배너 */}
+      {isLocalhost && (
+        <div role="alert" className="px-4 py-3 bg-error-subtle border border-error-border rounded-xl text-sm text-error space-y-1" data-testid="localhost-warning">
+          <p className="font-semibold">웹훅 URL이 localhost를 가리키고 있습니다</p>
+          <p>Google 서버는 <code className="font-mono text-xs">localhost</code>에 접근할 수 없어 폼 제출이 대시보드에 반영되지 않습니다.</p>
+          <p>
+            앱을 Vercel 등에 배포한 후 <code className="font-mono text-xs">NEXT_PUBLIC_SITE_URL</code>을 실제 도메인으로 설정하고
+            이 페이지에서 코드를 다시 복사해 Apps Script에 붙여넣으세요.
+          </p>
+          <p className="text-xs opacity-75">예: <code className="font-mono">NEXT_PUBLIC_SITE_URL=https://your-project.vercel.app</code></p>
         </div>
-        <pre className="w-full p-4 bg-page border border-bdr rounded-xl text-xs font-mono text-txt-secondary overflow-x-auto leading-relaxed whitespace-pre">
-          {appsScript}
-        </pre>
+      )}
+
+      {/* 코드 박스 (토글) */}
+      <div className="border border-bdr rounded-xl overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setShowCode(prev => !prev)}
+          data-testid="toggle-script-btn"
+          className="w-full flex items-center justify-between px-4 py-3 bg-page hover:bg-brand-subtle transition-colors text-left"
+        >
+          <span className="text-sm font-medium text-txt-secondary">Apps Script 코드</span>
+          <span className="text-xs text-txt-muted">{showCode ? '▲ 접기' : '▼ 펼치기'}</span>
+        </button>
+        {showCode && (
+          <>
+            <div className="flex justify-end px-4 py-2 border-t border-bdr bg-surface">
+              <button
+                onClick={handleCopy}
+                data-testid="copy-script-btn"
+                className="text-xs px-3 py-1.5 rounded-lg border border-bdr hover:border-brand hover:text-brand transition-all text-txt-muted"
+              >
+                {copied ? '✓ 복사됨' : '복사'}
+              </button>
+            </div>
+            <pre className="w-full p-4 bg-page border-t border-bdr text-xs font-mono text-txt-secondary overflow-x-auto leading-relaxed whitespace-pre">
+              {appsScript}
+            </pre>
+          </>
+        )}
       </div>
 
       {/* 주의사항 */}
