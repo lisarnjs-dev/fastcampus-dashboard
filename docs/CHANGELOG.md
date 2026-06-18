@@ -9,6 +9,14 @@
 
 ## 2026-06-17
 
+### 기능 추가
+- **출석 현황 날짜 네비게이션** (`/admin/attendance`): 기수 전체 기간(시작일~종료일) 내 임의 날짜의 출석 현황을 조회할 수 있는 날짜 스트립 추가
+  - `?date=YYYY-MM-DD` URL 파라미터 기반 — 서버 컴포넌트 아키텍처 유지, API 수정 없음
+  - 날짜 버튼 클릭 시 해당 날짜 출석 데이터 로드, 오늘 날짜 기본 선택 및 스크롤 자동 이동
+  - 주(week) 경계 시각적 구분, 오늘 날짜 표시 점, 선택 날짜 하이라이트
+  - `generateDateRange()` 유틸 추가 (`src/lib/date.ts`), `AttendanceDateNav` 컴포넌트 신규 (`src/components/admin/AttendanceDateNav.tsx`)
+  - E2E 테스트 추가 (`e2e/admin-attendance-date-nav.spec.ts`)
+
 ### 개선
 - **Google Forms 웹훅 localhost 경고 배너 추가** (`GoogleFormsWebhookSetup.tsx`): `NEXT_PUBLIC_SITE_URL`이 비어 있거나 `localhost`/`127.0.0.1`을 포함할 때 Apps Script 코드 박스 위에 빨간 경고 배너 표시
   - 근본 원인: 로컬 개발 환경에서 코드를 복사하면 `localhost` URL이 Apps Script에 삽입되어 Google 서버에서 DNS 에러 발생 → 미션 제출이 대시보드에 자동 반영되지 않는 문제

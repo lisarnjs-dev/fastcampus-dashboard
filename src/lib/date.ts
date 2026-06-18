@@ -16,6 +16,23 @@ function toLocalDateString(date: Date): string {
 }
 
 /**
+ * start부터 end까지 하루씩 증가하며 YYYY-MM-DD 배열을 반환한다.
+ * 양 끝 날짜 포함. UTC 해석 오류를 피하기 위해 로컬 타임존 기준으로 파싱한다.
+ */
+export function generateDateRange(start: string, end: string): string[] {
+  const [sy, sm, sd] = start.split('-').map(Number)
+  const [ey, em, ed] = end.split('-').map(Number)
+  const current = new Date(sy, sm - 1, sd)
+  const last = new Date(ey, em - 1, ed)
+  const dates: string[] = []
+  while (current <= last) {
+    dates.push(toLocalDateString(current))
+    current.setDate(current.getDate() + 1)
+  }
+  return dates
+}
+
+/**
  * YYYY-MM-DD 날짜 문자열에 weeks 주를 더한 날짜를 YYYY-MM-DD로 반환한다.
  * UTC 해석 오류를 피하기 위해 로컬 타임존 기준으로 파싱한다.
  */

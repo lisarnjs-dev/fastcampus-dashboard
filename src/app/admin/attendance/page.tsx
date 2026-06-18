@@ -1,13 +1,29 @@
 export const dynamic = 'force-dynamic'
 import { createServerClient } from '@/lib/supabase/server'
 import { AttendanceOverview } from '@/components/admin/AttendanceOverview'
+import { AttendanceDateNav } from '@/components/admin/AttendanceDateNav'
+import { generateDateRange } from '@/lib/date'
 import type { Cohort, Student, Attendance } from '@/types/database'
 
 function toKSTDateString(date: Date): string {
   return new Date(date.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
 }
 
-export default async function AdminAttendancePage() {
+function isValidDate(str: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str)
+  if (!match) return false
+  const [, y, m, d] = match.map(Number)
+  if (m < 1 || m > 12 || d < 1 || d > 31) return false
+  const date = new Date(y, m - 1, d)
+  return date.getMonth() === m - 1 && date.getDate() === d
+}
+
+export default async function AdminAttendancePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>
+}) {
+  const { date: requestedDate } = await searchParams
   const supabase = createServerClient()
 
   const cohortResult = await supabase
@@ -26,8 +42,20 @@ export default async function AdminAttendancePage() {
     )
   }
 
-  const today = toKSTDateString(new Date())
+  const todayKST = toKSTDateString(new Date())
   const cohortId = activeCohort.id
+
+  const cohortStart = activeCohort.started_at.slice(0, 10)
+  const dateRangeEnd = activeCohort.ended_at?.slice(0, 10)
+    ?? activeCohort.planned_end_at?.slice(0, 10)
+    ?? todayKST
+
+  const dates = generateDateRange(cohortStart, dateRangeEnd)
+
+  const selectedDate =
+    requestedDate && isValidDate(requestedDate) && dates.includes(requestedDate)
+      ? requestedDate
+      : todayKST
 
   const studentsResult = await supabase
     .from('students')
@@ -41,11 +69,16 @@ export default async function AdminAttendancePage() {
     .from('attendances')
     .select('student_id')
     .eq('cohort_id', cohortId)
-    .eq('date', today)
-  const todayAttendances = (attendancesResult.data ?? []) as Pick<Attendance, 'student_id'>[]
+    .eq('date', selectedDate)
+  const dateAttendances = (attendancesResult.data ?? []) as Pick<Attendance, 'student_id'>[]
 
-  const presentIds = new Set(todayAttendances.map(a => a.student_id))
-  const todayLabel = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
+  const presentIds = new Set(dateAttendances.map(a => a.student_id))
+  const dateLabel = new Date(selectedDate).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'Asia/Seoul',
+  })
 
   return (
     <div className="space-y-6">
@@ -63,11 +96,13 @@ export default async function AdminAttendancePage() {
         </a>
       </div>
 
+      <AttendanceDateNav dates={dates} selectedDate={selectedDate} todayKST={todayKST} />
+
       <AttendanceOverview
         presentIds={presentIds}
         students={students}
         cohortName={activeCohort.name}
-        todayLabel={todayLabel}
+        dateLabel={dateLabel}
       />
     </div>
   )

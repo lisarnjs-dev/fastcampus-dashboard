@@ -11,10 +11,10 @@ interface Props {
   presentIds: Set<string>
   students: StudentSummary[]
   cohortName: string
-  todayLabel: string
+  dateLabel: string
 }
 
-export function AttendanceOverview({ presentIds, students, cohortName, todayLabel }: Props) {
+export function AttendanceOverview({ presentIds, students, cohortName, dateLabel }: Props) {
   const absent = students.filter(s => !presentIds.has(s.id))
   const present = students.filter(s => presentIds.has(s.id))
 
@@ -22,7 +22,7 @@ export function AttendanceOverview({ presentIds, students, cohortName, todayLabe
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="flex-1">
-          <p className="text-sm text-neutral-500">{todayLabel} 기준</p>
+          <p className="text-sm text-neutral-500">{dateLabel} 기준</p>
           <div className="flex gap-6 mt-1">
             <span className="text-sm"><span className="font-semibold text-green-600">{present.length}</span> 출석</span>
             <span className="text-sm"><span className="font-semibold text-red-500">{absent.length}</span> 미출석</span>
