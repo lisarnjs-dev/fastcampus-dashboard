@@ -16,21 +16,29 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-    const response = NextResponse.next()
-    const session = await getIronSession<SessionData>(request, response, sessionOptions)
-    if (!session.admin?.isAdmin) {
+    try {
+      const response = NextResponse.next()
+      const session = await getIronSession<SessionData>(request, response, sessionOptions)
+      if (!session.admin?.isAdmin) {
+        return NextResponse.redirect(new URL('/admin/login', request.url))
+      }
+      return response
+    } catch {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
-    return response
   }
 
   if (pathname === '/checkin') {
-    const response = NextResponse.next()
-    const session = await getIronSession<SessionData>(request, response, sessionOptions)
-    if (!session.student?.studentId) {
+    try {
+      const response = NextResponse.next()
+      const session = await getIronSession<SessionData>(request, response, sessionOptions)
+      if (!session.student?.studentId) {
+        return NextResponse.redirect(new URL('/login', request.url))
+      }
+      return response
+    } catch {
       return NextResponse.redirect(new URL('/login', request.url))
     }
-    return response
   }
 
   return NextResponse.next()
