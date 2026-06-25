@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase/server'
 import { DashboardTabs } from '@/components/dashboard/DashboardTabs'
+import { LogoutButton } from '@/components/dashboard/LogoutButton'
 import { GroupSelector } from '@/components/dashboard/GroupSelector'
 import { TodayCheckinCard } from '@/components/dashboard/TodayCheckinCard'
 import { getSession } from '@/lib/session'
@@ -71,6 +72,7 @@ export default async function DashboardGroupPage({ params }: Props) {
 
   const groupStudents = students.filter(s => s.dashboard_group === group)
   const attendedIds = attendances.map(a => a.student_id)
+  const isAlreadyCheckedIn = session.student ? attendedIds.includes(session.student.studentId) : false
   const attendanceMessages = Object.fromEntries(attendances.map(a => [a.student_id, a.message]))
   const attendedCount = groupStudents.filter(s => attendedIds.includes(s.id)).length
   const attendancePct = groupStudents.length > 0 ? Math.round((attendedCount / groupStudents.length) * 100) : 0
@@ -94,12 +96,15 @@ export default async function DashboardGroupPage({ params }: Props) {
                 <p className="text-xs text-gray-400">{today}</p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-xl font-bold text-gray-900">
-                {attendedCount}
-                <span className="text-gray-300 font-normal text-base">/{groupStudents.length}</span>
-              </p>
-              <p className="text-xs text-gray-400">오늘 출석</p>
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <p className="text-xl font-bold text-gray-900">
+                  {attendedCount}
+                  <span className="text-gray-300 font-normal text-base">/{groupStudents.length}</span>
+                </p>
+                <p className="text-xs text-gray-400">오늘 출석</p>
+              </div>
+              {isStudentLoggedIn && <LogoutButton />}
             </div>
           </div>
         </div>
@@ -124,7 +129,7 @@ export default async function DashboardGroupPage({ params }: Props) {
         </div>
 
         {/* Checkin card */}
-        <TodayCheckinCard cohort={activeCohort} />
+        <TodayCheckinCard cohort={activeCohort} alreadyCheckedIn={isAlreadyCheckedIn} />
 
         {/* Attendance / Mission tabs */}
         <DashboardTabs

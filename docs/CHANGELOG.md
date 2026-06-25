@@ -7,6 +7,30 @@
 
 ---
 
+## 2026-06-25 (3)
+
+### 기능 추가
+- **수강생 대시보드 — 출석 완료 시 인증 버튼 비활성화**: 이미 오늘 출석 인증을 완료한 수강생에게 "출석 완료 ✓" 버튼(비활성) 표시
+  - `attendedIds`에 현재 로그인 수강생의 `studentId`가 포함되는지 서버에서 계산 (`isAlreadyCheckedIn`)
+  - 출석 완료 시 `CohortStartGate` 대신 `disabled` 버튼 렌더링 (`bg-success-subtle text-success-fg`)
+  - 안내 문구 변경: "오늘 출석 인증을 완료하셨나요?" → "오늘 출석 인증을 완료하셨습니다! 🎉"
+  - 추가 DB 쿼리 없음 (페이지가 이미 조회한 `attendances` 데이터 재활용)
+
+---
+
+## 2026-06-25 (2)
+
+### 기능 추가
+- **수강생 대시보드 — 로그아웃 버튼** (`/dashboard/[group]`): 수강생이 세션을 직접 종료할 수 있는 로그아웃 버튼 추가
+  - 로그인된 수강생에게만 헤더 우측에 버튼 표시 (`isStudentLoggedIn` 조건부 렌더링)
+  - `POST /api/auth/logout` 호출 후 `/login`으로 리다이렉트
+  - 클릭 중 버튼 비활성화 + 로딩 표시(`...`)로 중복 제출 방지
+  - 디자인 토큰 사용: `text-txt-muted border-bdr hover:border-brand hover:text-brand`
+  - `data-testid="logout-button"` 테스트 속성 추가
+  - `src/components/dashboard/LogoutButton.tsx` 신규 생성
+
+---
+
 ## 2026-06-25
 
 ### 기능 추가

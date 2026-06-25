@@ -6,9 +6,10 @@ import type { Cohort } from '@/types/database'
 
 interface Props {
   cohort: Cohort
+  alreadyCheckedIn?: boolean
 }
 
-export async function TodayCheckinCard({ cohort }: Props) {
+export async function TodayCheckinCard({ cohort, alreadyCheckedIn = false }: Props) {
   const session = await getSession()
   const student = session.student
   const started = hasCohortStarted(cohort.started_at)
@@ -19,17 +20,31 @@ export async function TodayCheckinCard({ cohort }: Props) {
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="font-medium text-gray-900">{student.name}님, 안녕하세요! 👋</p>
-            <p className="text-sm text-gray-500 mt-0.5">오늘 출석 인증을 완료하셨나요?</p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {alreadyCheckedIn
+                ? '오늘 출석 인증을 완료하셨습니다! 🎉'
+                : '오늘 출석 인증을 완료하셨나요?'}
+            </p>
           </div>
-          <CohortStartGate
-            started={started}
-            startedAt={cohort.started_at}
-            href="/checkin"
-            dataTestId="checkin-link"
-            className="shrink-0 px-4 py-2.5 bg-violet-600 text-white text-sm font-medium rounded-xl hover:bg-violet-700 transition-colors"
-          >
-            출석 인증
-          </CohortStartGate>
+          {alreadyCheckedIn ? (
+            <button
+              disabled
+              data-testid="checkin-link"
+              className="shrink-0 px-4 py-2.5 bg-success-subtle text-success-fg text-sm font-medium rounded-xl cursor-not-allowed"
+            >
+              출석 완료 ✓
+            </button>
+          ) : (
+            <CohortStartGate
+              started={started}
+              startedAt={cohort.started_at}
+              href="/checkin"
+              dataTestId="checkin-link"
+              className="shrink-0 px-4 py-2.5 bg-violet-600 text-white text-sm font-medium rounded-xl hover:bg-violet-700 transition-colors"
+            >
+              출석 인증
+            </CohortStartGate>
+          )}
         </div>
       ) : (
         <div className="flex items-center justify-between gap-4">
