@@ -6,10 +6,16 @@ import { createBrowserClient } from '@/lib/supabase/client'
 interface AttendanceRecord {
   student_id: string
   date: string
+  message: string
 }
 
-export function useAttendanceRealtime(group: string, initialAttended: Set<string>) {
+export function useAttendanceRealtime(
+  group: string,
+  initialAttended: Set<string>,
+  initialMessages: Record<string, string> = {}
+) {
   const [attended, setAttended] = useState<Set<string>>(initialAttended)
+  const [messages, setMessages] = useState<Record<string, string>>(initialMessages)
 
   useEffect(() => {
     const supabase = createBrowserClient()
@@ -28,6 +34,7 @@ export function useAttendanceRealtime(group: string, initialAttended: Set<string
         (payload) => {
           const record = payload.new as AttendanceRecord
           setAttended(prev => new Set([...prev, record.student_id]))
+          setMessages(prev => ({ ...prev, [record.student_id]: record.message }))
         }
       )
       .subscribe()
@@ -37,5 +44,5 @@ export function useAttendanceRealtime(group: string, initialAttended: Set<string
     }
   }, [group])
 
-  return attended
+  return { attended, messages }
 }

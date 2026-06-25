@@ -40,8 +40,8 @@ export default async function DashboardGroupPage({ params }: Props) {
   const students = (studentsResult.data ?? []) as Student[]
 
   const attendancesResult = await supabase
-    .from('attendances').select('student_id').eq('cohort_id', cohortId).eq('date', today)
-  const attendances = (attendancesResult.data ?? []) as { student_id: string }[]
+    .from('attendances').select('student_id, message').eq('cohort_id', cohortId).eq('date', today)
+  const attendances = (attendancesResult.data ?? []) as { student_id: string; message: string }[]
 
   const missionsResult = await supabase
     .from('missions').select('*').eq('cohort_id', cohortId)
@@ -71,6 +71,7 @@ export default async function DashboardGroupPage({ params }: Props) {
 
   const groupStudents = students.filter(s => s.dashboard_group === group)
   const attendedIds = attendances.map(a => a.student_id)
+  const attendanceMessages = Object.fromEntries(attendances.map(a => [a.student_id, a.message]))
   const attendedCount = groupStudents.filter(s => attendedIds.includes(s.id)).length
   const attendancePct = groupStudents.length > 0 ? Math.round((attendedCount / groupStudents.length) * 100) : 0
 
@@ -131,6 +132,7 @@ export default async function DashboardGroupPage({ params }: Props) {
           missions={missions}
           submissions={submissions}
           attendedIds={attendedIds}
+          attendanceMessages={attendanceMessages}
           group={group}
           isStudentLoggedIn={isStudentLoggedIn}
         />

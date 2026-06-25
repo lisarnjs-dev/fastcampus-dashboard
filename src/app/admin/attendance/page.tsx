@@ -67,12 +67,13 @@ export default async function AdminAttendancePage({
 
   const attendancesResult = await supabase
     .from('attendances')
-    .select('student_id')
+    .select('student_id, message')
     .eq('cohort_id', cohortId)
     .eq('date', selectedDate)
-  const dateAttendances = (attendancesResult.data ?? []) as Pick<Attendance, 'student_id'>[]
+  const dateAttendances = (attendancesResult.data ?? []) as Pick<Attendance, 'student_id' | 'message'>[]
 
   const presentIds = new Set(dateAttendances.map(a => a.student_id))
+  const attendanceMessages = Object.fromEntries(dateAttendances.map(a => [a.student_id, a.message]))
   const dateLabel = new Date(selectedDate).toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'long',
@@ -100,6 +101,7 @@ export default async function AdminAttendancePage({
 
       <AttendanceOverview
         presentIds={presentIds}
+        attendanceMessages={attendanceMessages}
         students={students}
         cohortName={activeCohort.name}
         dateLabel={dateLabel}

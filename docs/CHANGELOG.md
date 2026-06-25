@@ -7,6 +7,21 @@
 
 ---
 
+## 2026-06-25
+
+### 기능 추가
+- **어드민 출석 현황 — 출석 수강생 섹션 추가** (`/admin/attendance`): 기존 미출석 수강생 섹션 아래에 "출석 수강생" 섹션 추가
+  - 출석 수강생 이름·그룹·출석 시 작성한 메시지를 카드 형태로 표시
+  - 스타일: `bg-success-subtle`, `border-success-border`, `text-success-fg` 디자인 토큰 사용
+  - `attendanceMessages: Record<string, string>` prop 체인: `admin/attendance/page.tsx` → `AttendanceOverview`
+- **학생 대시보드 — 출석 메시지 툴팁** (`/dashboard/[group]`): 출석한 수강생 이름에 마우스 호버 시 출석 메시지가 페이드인 툴팁으로 표시
+  - `opacity-0 → opacity-100` CSS 트랜지션 (200ms) + `group/cell`, `group-hover/cell:` Tailwind 그룹 수식자 사용
+  - `useAttendanceRealtime` 훅 확장: `messages: Record<string, string>` 상태 추가, 리얼타임 INSERT 시 메시지도 실시간 반영
+  - 브라우저 기본 `title` 툴팁 제거 (`title={s.name}` → 삭제) — 커스텀 툴팁 충돌 방지
+  - `attendanceMessages` prop 체인: `dashboard/[group]/page.tsx` → `DashboardTabs` → `AttendanceGrid`
+
+---
+
 ## 2026-06-17
 
 ### 기능 추가
